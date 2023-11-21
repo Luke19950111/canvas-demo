@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-size: 0;
+    }
+    
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+    const dpr = window.devicePixelRatio || 1
+    const width = window.innerWidth
+    const height = window.innerHeight
+    let points
+    const offset = 90
+    let r = 0
+
+    canvas.width = width
+    canvas.height = height
+    ctx.globalAlpha = 0.6
+
+    function init() {
+      ctx.clearRect(0, 0, width, height)
+      points = [
+        { x: 0, y: height * .7 + offset },
+        { x: 0, y: height*.7 - offset }
+      ]
+      while (points[1].x < width + offset) {
+        draw(points[0], points[1])
+      }
+    }
+
+    function draw(i, j) {
+      ctx.beginPath()
+      ctx.moveTo(i.x, i.y)
+      ctx.lineTo(j.x, j.y)
+      const k = { x: j.x + (Math.random() * 2 - 0.25) * offset, y: getY(j.y)}
+      ctx.lineTo(k.x, k.y)
+      ctx.closePath()
+
+      const u = Math.PI * 2
+      const v = Math.cos
+      r -= u / -50
+      ctx.fillStyle = '#' + (v(r) * 127 + 128 << 16 | v(r + u / 3) * 127 + 128 << 8 | v(r + u / 3 * 2) * 127 + 128).toString(16)
+      ctx.fill()
+
+      points[0] = points[1]
+      points[1] = k
+    }
+
+    function getY(y) {
+      const result = y + (Math.random() * 2 - 1.1) * offset
+      return (result > height || result < 0) ? getY(result) : result
+    }
+
+    document.onclick = init
+    init()
+  </script>
+</body>
+</html>
